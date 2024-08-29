@@ -8,17 +8,13 @@ Return log message with sensitive fields obfuscated.
     separator: string - the character used to separate
     the fields in the log message
 
-Regex Pattern:
-    pattern = f'{field}=.*?(?={separator}|$)'
-    This pattern matches field=value where value is any sequence of characters
-    until it hits either the separator or the end of the string.
+Regex: f'({"|".join(fields)})=[^{separator}]*'
+    {"|".join(fields)} creates a group of fields that are matched by the regex
+    =[^{separator}]* matches the value of the field, stopping at the separator
+    or the end of the string.
 """
 import re
-
-
 def filter_datum(fields, redaction, message, separator):
     """ return log message obfuscated """
-    for field in fields:
-        pattern = f'{field}=.*?(?={separator}|$)'
-        message = re.sub(pattern, f'{field}={redaction}', message)
-    return message
+    return re.sub(f'({"|".join(fields)})=[^{separator}]*',
+                  lambda m: f"{m.group(1)}={redaction}", message)
