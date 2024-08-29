@@ -14,6 +14,8 @@ Regex: f'({"|".join(fields)})=[^{separator}]*'
     or the end of the string.
 """
 import re
+
+
 def filter_datum(fields, redaction, message, separator):
     """ return log message obfuscated """
     return re.sub(f'({"|".join(fields)})=[^{separator}]*',
