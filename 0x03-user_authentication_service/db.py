@@ -31,20 +31,16 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, passwd: str) -> object:
+    def add_user(self, email: str, passwd: str) -> User:
         """
         returns a User object
         """
         new_user = User(email=email, hashed_password=passwd)
 
-        self._session.add(new_user)
         try:
+            self._session.add(new_user)
             self._session.commit()
-            print("User added successfully!")
         except Exception as e:
             self._session.rollback()
-            print(f"An error occured {e}")
-        finally:
-            self._session.close()
-
+            raise
         return new_user
